@@ -50,7 +50,7 @@ fun NewsScreen(
                             .verticalScroll(rememberScrollState())
                     ) {
                         Text(
-                            text = "Новости",
+                            text = "Новости и реклама",
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.Bold
                             ),
@@ -59,7 +59,7 @@ fun NewsScreen(
                         )
 
                         Text(
-                            text = "• Новости обновляются каждые 5 секунд\n• СТАВЬТЕ ЛАЙКИ 👍\n• Закройте это окно, чтобы начать",
+                            text = "• Новости и реклама обновляются каждые 5 секунд\n• СТАВЬТЕ ЛАЙКИ 👍\n• Закройте это окно, чтобы начать",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(bottom = 24.dp)

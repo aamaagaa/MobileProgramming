@@ -1,5 +1,7 @@
 package com.example.astronomicalguidebook.data
 
+import com.example.astronomicalguidebook.R
+
 data class News(
     val id: Int,
     val title: String,
@@ -7,6 +9,11 @@ data class News(
     var likes: Int = 0
 )
 
+data class Advertisement(
+    val id: Int,
+    val title: String,
+    val imageResId: Int,
+)
 object NewsData {
     val newsList = listOf(
         News(
@@ -58,6 +65,29 @@ object NewsData {
             id = 10,
             title = "Северное сияние",
             content = "На этой неделе ожидается сильная магнитная буря."
+        )
+    )
+
+    val advertisements = listOf(
+        Advertisement(
+            id = 11,
+            title = "BURGER KING теперь и в космосе!",
+            imageResId = R.drawable.bk,
+        ),
+        Advertisement(
+            id = 12,
+            title = "Кола не просто мировой уровень, а вселеннский!",
+            imageResId = R.drawable.cola,
+        ),
+        Advertisement(
+            id = 13,
+            title = "СРОЧНО ИЩУ РАБОТУ!!",
+            imageResId = R.drawable.job,
+        ),
+        Advertisement(
+            id = 14,
+            title = "Напиток от Ганвеста уже и на Солнце.",
+            imageResId = R.drawable.pepe,
         )
     )
 }

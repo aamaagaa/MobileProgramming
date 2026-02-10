@@ -2,6 +2,7 @@ package com.example.astronomicalguidebook.ui.news
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.astronomicalguidebook.data.Advertisement
 import com.example.astronomicalguidebook.data.News
 import com.example.astronomicalguidebook.data.NewsData
 import kotlinx.coroutines.Job
@@ -15,13 +16,14 @@ class NewsViewModel : ViewModel() {
 
     private val _newsLikes = mutableMapOf<Int, Int>()
 
-    private val _displayedNews = MutableStateFlow<List<News>>(emptyList())
-    val displayedNews: StateFlow<List<News>> = _displayedNews.asStateFlow()
+    private val _displayedNews = MutableStateFlow<List<Any>>(emptyList())
+    val displayedNews: StateFlow<List<Any>> = _displayedNews.asStateFlow()
 
     private val _isNewsDialogVisible = MutableStateFlow(true)
     val isNewsDialogVisible: StateFlow<Boolean> = _isNewsDialogVisible.asStateFlow()
 
     private val allNews = NewsData.newsList
+    private val allAds = NewsData.advertisements
 
     private var rotationJob: Job? = null
 
@@ -31,11 +33,14 @@ class NewsViewModel : ViewModel() {
     }
 
     private fun initializeNews() {
-
-        val randomNews = allNews.shuffled().take(4).map { news ->
-            news.copy(likes = _newsLikes[news.id] ?: 0)
+        val allItems = allNews + allAds
+        val randomItems = allItems.shuffled().take(4).map { item ->
+            when (item) {
+                is News -> item.copy(likes = _newsLikes[item.id] ?: 0)
+                else -> item
+            }
         }
-        _displayedNews.value = randomNews
+        _displayedNews.value = randomItems
     }
 
     private fun startNewsRotation() {
@@ -48,21 +53,37 @@ class NewsViewModel : ViewModel() {
     }
 
     private fun rotateRandomNews() {
-        val currentNews = _displayedNews.value.toMutableList()
+        val currentItems = _displayedNews.value.toMutableList()
 
-        val displayedNewsIds = currentNews.map { it.id }
-        val availableNews = allNews.filter { it.id !in displayedNewsIds }
+        val displayedIds = currentItems.mapNotNull { item ->
+            when (item) {
+                is News -> item.id
+                is Advertisement -> item.id
+                else -> null
+            }
+        }
 
-        if (availableNews.isNotEmpty()) {
+        val allItems = allNews + allAds
+        val availableItems = allItems.filter { item ->
+            val itemId = when (item) {
+                is News -> item.id
+                is Advertisement -> item.id
+                else -> -1
+            }
+            itemId !in displayedIds
+        }
+
+        if (availableItems.isNotEmpty()) {
             val positionToReplace = (0 until 4).random()
+            val newItem = availableItems.random()
 
-            val newNews = availableNews.random()
+            val updatedItem = when (newItem) {
+                is News -> newItem.copy(likes = _newsLikes[newItem.id] ?: 0)
+                else -> newItem
+            }
 
-            val savedLikes = _newsLikes[newNews.id] ?: 0
-
-            currentNews[positionToReplace] = newNews.copy(likes = savedLikes)
-
-            _displayedNews.value = currentNews
+            currentItems[positionToReplace] = updatedItem
+            _displayedNews.value = currentItems
         }
     }
 
@@ -70,14 +91,14 @@ class NewsViewModel : ViewModel() {
         val currentLikes = _newsLikes[newsId] ?: 0
         _newsLikes[newsId] = currentLikes + 1
 
-        val updatedNews = _displayedNews.value.map { news ->
-            if (news.id == newsId) {
-                news.copy(likes = news.likes + 1)
+        val updatedItems = _displayedNews.value.map { item ->
+            if (item is News && item.id == newsId) {
+                item.copy(likes = item.likes + 1)
             } else {
-                news
+                item
             }
         }
-        _displayedNews.value = updatedNews
+        _displayedNews.value = updatedItems
     }
 
     fun closeNewsDialog() {
