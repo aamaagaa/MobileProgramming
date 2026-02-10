@@ -1,20 +1,20 @@
 package com.example.astronomicalguidebook.ui.news
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.astronomicalguidebook.ui.theme.AstronomicalGuidebookTheme
+import com.example.astronomicalguidebook.data.NewsData
 
 @Composable
 fun NewsScreen(
@@ -30,23 +30,29 @@ fun NewsScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
+                Spacer(modifier = Modifier.height(36.dp))
+
                 Text(
-                    text = "Астрономические новости",
+                    text = "НОВОСТИ",
                     style = MaterialTheme.typography.headlineLarge.copy(
                         fontWeight = FontWeight.Bold,
-                        fontSize = 28.sp
+                        fontSize = 24.sp
                     ),
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 8.dp)
                 )
 
                 Text(
                     text = "Новости обновляются каждые 5 секунд",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 16.dp)
                 )
 
                 if (displayedNews.isNotEmpty()) {
@@ -55,13 +61,17 @@ fun NewsScreen(
                         onLikeClick = { newsId ->
                             viewModel.likeNews(newsId)
                         },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(680.dp)
+                            .padding(horizontal = 8.dp)
                     )
                 } else {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .weight(1f),
+                            .weight(1f)
+                            .padding(16.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -72,11 +82,21 @@ fun NewsScreen(
                 }
 
                 Text(
-                    text = "Нажимайте на кнопки 👍, чтобы поставить лайк",
+                    text = "СТАВЬТЕ ЛАЙКИ 👍",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
-                        .padding(top = 16.dp)
+                        .padding(top = 16.dp, bottom = 24.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .padding(horizontal = 16.dp)
+                )
+
+                Text(
+                    text = "Всего новостей: ${NewsData.newsList.size}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                    modifier = Modifier
+                        .padding(bottom = 24.dp)
                         .align(Alignment.CenterHorizontally)
                 )
             }

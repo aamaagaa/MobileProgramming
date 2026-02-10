@@ -13,6 +13,8 @@ import kotlinx.coroutines.launch
 
 class NewsViewModel : ViewModel() {
 
+    private val _newsLikes = mutableMapOf<Int, Int>()
+
     private val _displayedNews = MutableStateFlow<List<News>>(emptyList())
     val displayedNews: StateFlow<List<News>> = _displayedNews.asStateFlow()
 
@@ -26,7 +28,9 @@ class NewsViewModel : ViewModel() {
     }
 
     private fun initializeNews() {
-        val randomNews = allNews.shuffled().take(4)
+        val randomNews = allNews.shuffled().take(4).map { news ->
+            news.copy(likes = _newsLikes[news.id] ?: 0)
+        }
         _displayedNews.value = randomNews
     }
 
@@ -42,22 +46,27 @@ class NewsViewModel : ViewModel() {
     private fun rotateRandomNews() {
         val currentNews = _displayedNews.value.toMutableList()
 
-        val availableNews = allNews.filter { it !in currentNews }
+        val availableNews = allNews.filter { news ->
+            currentNews.none { it.id == news.id }
+        }
 
         if (availableNews.isNotEmpty()) {
             val positionToReplace = (0 until 4).random()
 
             val newNews = availableNews.random()
 
-            val oldNews = currentNews[positionToReplace]
-            val newsWithLikes = newNews.copy(likes = oldNews.likes)
-            currentNews[positionToReplace] = newsWithLikes
+            val savedLikes = _newsLikes[newNews.id] ?: 0
+
+            currentNews[positionToReplace] = newNews.copy(likes = savedLikes)
 
             _displayedNews.value = currentNews
         }
     }
 
     fun likeNews(newsId: Int) {
+        val currentLikes = _newsLikes[newsId] ?: 0
+        _newsLikes[newsId] = currentLikes + 1
+
         val updatedNews = _displayedNews.value.map { news ->
             if (news.id == newsId) {
                 news.copy(likes = news.likes + 1)

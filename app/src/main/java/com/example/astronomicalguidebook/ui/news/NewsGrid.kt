@@ -4,20 +4,22 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.astronomicalguidebook.data.News
 
 @Composable
 fun NewsGrid(
-    newsList: List<com.example.astronomicalguidebook.data.News>,
+    newsList: List<News>,
     onLikeClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
+
         Row(
             modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             if (newsList.size > 0) {
                 NewsItem(
@@ -38,7 +40,7 @@ fun NewsGrid(
 
         Row(
             modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             if (newsList.size > 2) {
                 NewsItem(

@@ -7,12 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.astronomicalguidebook.data.News
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NewsItem(
     news: News,
@@ -22,21 +23,22 @@ fun NewsItem(
     Card(
         modifier = modifier
             .fillMaxSize()
-            .padding(4.dp)
-            .clip(RoundedCornerShape(8.dp)),
+            .padding(horizontal = 4.dp, vertical = 2.dp)
+            .clip(RoundedCornerShape(12.dp)),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
+
             Column(
                 modifier = Modifier
-                    .weight(0.9f)
-                    .padding(16.dp),
+                    .weight(0.85f)
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.Top
             ) {
                 Text(
@@ -47,12 +49,12 @@ fun NewsItem(
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 Text(
                     text = news.content,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 4,
+                    style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 18.sp),
+                    maxLines = 5,
                     overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -60,26 +62,29 @@ fun NewsItem(
 
             Box(
                 modifier = Modifier
-                    .weight(0.1f)
+                    .weight(0.15f)
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp, vertical = 4.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Button(
+                OutlinedButton(
                     onClick = onLikeClick,
-                    modifier = Modifier.fillMaxSize(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                        .height(36.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f),
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     ),
-                    shape = RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)
+                    shape = RoundedCornerShape(20.dp),
+                    border = null
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Text("👍", fontSize = MaterialTheme.typography.bodyMedium.fontSize)
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = "${news.likes}",
                             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
