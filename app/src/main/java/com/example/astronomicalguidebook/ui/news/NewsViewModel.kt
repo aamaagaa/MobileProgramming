@@ -18,6 +18,9 @@ class NewsViewModel : ViewModel() {
     private val _displayedNews = MutableStateFlow<List<News>>(emptyList())
     val displayedNews: StateFlow<List<News>> = _displayedNews.asStateFlow()
 
+    private val _isNewsDialogVisible = MutableStateFlow(true)
+    val isNewsDialogVisible: StateFlow<Boolean> = _isNewsDialogVisible.asStateFlow()
+
     private val allNews = NewsData.newsList
 
     private var rotationJob: Job? = null
@@ -28,6 +31,7 @@ class NewsViewModel : ViewModel() {
     }
 
     private fun initializeNews() {
+
         val randomNews = allNews.shuffled().take(4).map { news ->
             news.copy(likes = _newsLikes[news.id] ?: 0)
         }
@@ -46,9 +50,8 @@ class NewsViewModel : ViewModel() {
     private fun rotateRandomNews() {
         val currentNews = _displayedNews.value.toMutableList()
 
-        val availableNews = allNews.filter { news ->
-            currentNews.none { it.id == news.id }
-        }
+        val displayedNewsIds = currentNews.map { it.id }
+        val availableNews = allNews.filter { it.id !in displayedNewsIds }
 
         if (availableNews.isNotEmpty()) {
             val positionToReplace = (0 until 4).random()
@@ -75,6 +78,14 @@ class NewsViewModel : ViewModel() {
             }
         }
         _displayedNews.value = updatedNews
+    }
+
+    fun closeNewsDialog() {
+        _isNewsDialogVisible.value = false
+    }
+
+    fun showNewsDialog() {
+        _isNewsDialogVisible.value = true
     }
 
     override fun onCleared() {

@@ -3,9 +3,7 @@ package com.example.astronomicalguidebook.ui.news
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,84 +19,101 @@ fun NewsScreen(
     viewModel: NewsViewModel = viewModel()
 ) {
     val displayedNews by viewModel.displayedNews.collectAsState()
+    val isDialogVisible by viewModel.isNewsDialogVisible.collectAsState()
 
     AstronomicalGuidebookTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                Spacer(modifier = Modifier.height(36.dp))
-
-                Text(
-                    text = "НОВОСТИ",
-                    style = MaterialTheme.typography.headlineLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp
-                    ),
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 8.dp)
-                )
-
-                Text(
-                    text = "Новости обновляются каждые 5 секунд",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 16.dp)
-                )
-
-                if (displayedNews.isNotEmpty()) {
-                    NewsGrid(
-                        newsList = displayedNews,
-                        onLikeClick = { newsId ->
-                            viewModel.likeNews(newsId)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(680.dp)
-                            .padding(horizontal = 8.dp)
+                if (!isDialogVisible) {
+                    Text(
+                        text = "Тут пока пусто",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(16.dp)
                     )
-                } else {
-                    Box(
+                }
+            }
+
+            if (isDialogVisible) {
+                NewsDialog(
+                    onDismissRequest = { viewModel.closeNewsDialog() }
+                ) {
+                    Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .weight(1f)
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
+                            .verticalScroll(rememberScrollState())
                     ) {
                         Text(
-                            text = "Загрузка новостей...",
-                            style = MaterialTheme.typography.bodyLarge
+                            text = "Новости",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(bottom = 8.dp)
                         )
+
+                        Text(
+                            text = "• Новости обновляются каждые 5 секунд\n• СТАВЬТЕ ЛАЙКИ 👍\n• Закройте это окно, чтобы начать",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(bottom = 24.dp)
+                        )
+
+                        if (displayedNews.isNotEmpty()) {
+                            NewsGrid(
+                                newsList = displayedNews,
+                                onLikeClick = { newsId ->
+                                    viewModel.likeNews(newsId)
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(500.dp)
+                            )
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(300.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                            )
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                Text(
+                                    text = "О приложении",
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                                Text(
+                                    text = "Это учебное приложение \"Астрономический справочник\". " +
+                                            "Делали: Михальчич Елизавета, " +
+                                            "Ничитайло Елизавета",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
                     }
                 }
-
-                Text(
-                    text = "СТАВЬТЕ ЛАЙКИ 👍",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier
-                        .padding(top = 16.dp, bottom = 24.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .padding(horizontal = 16.dp)
-                )
-
-                Text(
-                    text = "Всего новостей: ${NewsData.newsList.size}",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                    modifier = Modifier
-                        .padding(bottom = 24.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
             }
         }
     }
