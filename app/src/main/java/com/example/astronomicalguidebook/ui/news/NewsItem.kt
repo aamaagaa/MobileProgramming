@@ -23,7 +23,7 @@ fun NewsItem(
     Card(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 4.dp, vertical = 2.dp)
+            .padding(horizontal = 4.dp, vertical = 1.dp)
             .clip(RoundedCornerShape(12.dp)),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
@@ -37,7 +37,7 @@ fun NewsItem(
 
             Column(
                 modifier = Modifier
-                    .weight(0.85f)
+                    .weight(0.80f)
                     .padding(horizontal = 12.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.Top
             ) {
@@ -62,7 +62,7 @@ fun NewsItem(
 
             Box(
                 modifier = Modifier
-                    .weight(0.15f)
+                    .weight(0.20f)
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp, vertical = 4.dp),
                 contentAlignment = Alignment.Center
