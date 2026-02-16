@@ -16,6 +16,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.astronomicalguidebook.ui.theme.AstronomicalGuidebookTheme
 import com.example.astronomicalguidebook.data.NewsData
+import com.example.astronomicalguidebook.opengl.OpenGLRenderer
 
 @Composable
 fun NewsScreen(
