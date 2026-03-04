@@ -20,6 +20,7 @@ import com.example.astronomicalguidebook.opengl.OpenGLRenderer
 
 @Composable
 fun NewsScreen(
+    onOpenSolarSystem: () -> Unit,
     viewModel: NewsViewModel = viewModel()
 ) {
     val displayedNews by viewModel.displayedNews.collectAsState()
@@ -51,7 +52,9 @@ fun NewsScreen(
 
                 if (isDialogVisible) {
                     NewsDialog(
-                        onDismissRequest = { viewModel.closeNewsDialog() }
+                        onDismissRequest = { viewModel.closeNewsDialog()
+                                             onOpenSolarSystem()
+                        }
                     ) {
                         Column(
                             modifier = Modifier

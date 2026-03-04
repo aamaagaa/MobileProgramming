@@ -12,7 +12,7 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
     private lateinit var sun: TexturedPlanet
     private val planets = mutableListOf<TexturedPlanet>()
     private lateinit var moon: TexturedPlanet
-
+    private lateinit var selectorCube: SelectorCube
 
     private val orbitRadii = floatArrayOf(
         2.5f,  // Меркурий
@@ -56,7 +56,7 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
         8.0f,  // Венера
         7.0f,  // Земля
         5.0f,  // Марс
-        14.0f,  // Юпитер
+        14.0f, // Юпитер
         8.0f,  // Сатурн
         6.0f,  // Уран
         6.0f   // Нептун
@@ -65,21 +65,65 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
     private var lastTime = 0L
     private var baseAngle = 0f
 
+    private var selectedPlanetIndex = 0
+
+    private var isInitialized = false
+    private var pendingSelectedPlanetIndex = 0
+
+    fun selectNextPlanet() {
+        val newIndex = (selectedPlanetIndex + 1) % 9
+        updateSelectedPlanet(newIndex)
+        Log.d("Renderer", "Next planet selected: $newIndex")
+    }
+
+    fun selectPreviousPlanet() {
+        val newIndex = (selectedPlanetIndex - 1 + 9) % 9
+        updateSelectedPlanet(newIndex)
+        Log.d("Renderer", "Previous planet selected: $newIndex")
+    }
+
+    private fun updateSelectedPlanet(newIndex: Int) {
+        selectedPlanetIndex = newIndex
+        if (!isInitialized) {
+            pendingSelectedPlanetIndex = newIndex
+        }
+    }
+
+    fun getSelectedPlanetName(): String {
+        return when (selectedPlanetIndex) {
+            0 -> "Меркурий"
+            1 -> "Венера"
+            2 -> "Земля"
+            3 -> "Марс"
+            4 -> "Юпитер"
+            5 -> "Сатурн"
+            6 -> "Уран"
+            7 -> "Нептун"
+            8 -> "Луна"
+            else -> "Неизвестно"
+        }
+    }
+
     override fun onSurfaceCreated(gl: GL10, config: EGLConfig) {
-        Log.d("Renderer", "onSurfaceCreated")
+        Log.d("Renderer", "onSurfaceCreated - Starting")
+
         backgroundSquare = Square(context)
         backgroundSquare.loadTexture(gl)
+
         gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
         gl.glEnable(GL10.GL_DEPTH_TEST)
         gl.glDepthFunc(GL10.GL_LEQUAL)
 
         sun = TexturedPlanet(context, sunSize, R.drawable.sun)
 
+        planets.clear()
         for (i in textureIds.indices) {
             planets.add(TexturedPlanet(context, planetSizes[i], textureIds[i]))
         }
 
         moon = TexturedPlanet(context, moonSize, R.drawable.moon)
+
+        selectorCube = SelectorCube()
 
         sun.loadTexture(gl)
         for (planet in planets) {
@@ -88,6 +132,11 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
         moon.loadTexture(gl)
 
         lastTime = System.currentTimeMillis()
+
+        selectedPlanetIndex = pendingSelectedPlanetIndex
+        isInitialized = true
+
+        Log.d("Renderer", "onSurfaceCreated - Completed, selected planet: $selectedPlanetIndex")
     }
 
     override fun onSurfaceChanged(gl: GL10, width: Int, height: Int) {
@@ -130,7 +179,6 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
             0.0f, 1.0f, 0.0f
         )
 
-        gl.glMatrixMode(GL10.GL_MODELVIEW)
         gl.glPushMatrix()
         gl.glLoadIdentity()
 
@@ -173,6 +221,26 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
             gl.glPopMatrix()
         }
 
+        for (i in planets.indices) {
+            if (i == selectedPlanetIndex) {
+                gl.glPushMatrix()
+
+                val a = orbitRadii[i]
+                val ecc = eccentricity[i]
+                val b = a * Math.sqrt(1.0 - ecc * ecc).toFloat()
+
+                val orbitAngle = baseAngle * 40 * orbitSpeedMultipliers[i] + i * 45f
+
+                val x = a * Math.cos(orbitAngle.toDouble()).toFloat()
+                val z = b * Math.sin(orbitAngle.toDouble()).toFloat()
+
+                gl.glTranslatef(x, 0f, z)
+                selectorCube.draw(gl)
+
+                gl.glPopMatrix()
+            }
+        }
+
         gl.glPushMatrix()
 
         val earthRadius = orbitRadii[2]
@@ -199,5 +267,14 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
 
         moon.draw(gl)
         gl.glPopMatrix()
+
+        if (selectedPlanetIndex == 8) {
+            gl.glPushMatrix()
+
+            gl.glTranslatef(moonX, moonY, moonZ)
+            selectorCube.draw(gl)
+
+            gl.glPopMatrix()
+        }
     }
 }
