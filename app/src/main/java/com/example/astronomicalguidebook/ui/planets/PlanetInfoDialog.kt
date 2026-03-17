@@ -43,7 +43,6 @@ fun PlanetInfoDialog(
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Изображение планеты
                 Image(
                     painter = painterResource(id = planetInfo.imageResId),
                     contentDescription = planetInfo.name,
@@ -55,7 +54,6 @@ fun PlanetInfoDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Название
                 Text(
                     text = planetInfo.name,
                     style = MaterialTheme.typography.headlineMedium.copy(
@@ -65,7 +63,6 @@ fun PlanetInfoDialog(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Описание
                 Text(
                     text = planetInfo.description,
                     style = MaterialTheme.typography.bodyLarge
@@ -73,7 +70,6 @@ fun PlanetInfoDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Кнопка закрытия
                 Button(
                     onClick = onDismiss,
                     modifier = Modifier.fillMaxWidth()

@@ -1,5 +1,6 @@
 package com.example.astronomicalguidebook.opengl
 
+import android.content.Intent
 import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.widget.Button
@@ -94,8 +95,8 @@ class OpenGLActivity : AppCompatActivity() {
             val selectedIndex = renderer.getSelectedPlanetIndex()
             if (selectedIndex in 0..7) {
                 showPlanetInfo = true
-            } else {
-                Toast.makeText(this, "Луна - спутник Земли", Toast.LENGTH_SHORT).show()
+            } else if (selectedIndex == 8) {
+                startActivity(Intent(this, MoonActivity::class.java))
             }
         }
     }
