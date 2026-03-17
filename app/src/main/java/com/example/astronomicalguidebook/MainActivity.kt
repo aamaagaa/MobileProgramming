@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import com.example.astronomicalguidebook.opengl.OpenGLActivity
 import com.example.astronomicalguidebook.ui.news.NewsScreen
 
 class MainActivity : ComponentActivity() {

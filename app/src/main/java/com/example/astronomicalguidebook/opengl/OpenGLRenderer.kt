@@ -89,6 +89,10 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
         }
     }
 
+    fun getSelectedPlanetIndex(): Int {
+        return selectedPlanetIndex
+    }
+
     fun getSelectedPlanetName(): String {
         return when (selectedPlanetIndex) {
             0 -> "Меркурий"
