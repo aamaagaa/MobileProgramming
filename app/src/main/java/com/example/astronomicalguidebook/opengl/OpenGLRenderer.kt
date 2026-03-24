@@ -15,14 +15,7 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
     private lateinit var selectorCube: SelectorCube
 
     private val orbitRadii = floatArrayOf(
-        2.5f,  // Меркурий
-        4.0f,  // Венера
-        5.5f,  // Земля
-        7.0f,  // Марс
-        9.0f,  // Юпитер
-        11.0f, // Сатурн
-        13.0f, // Уран
-        15.0f  // Нептун
+        2.5f, 4.0f, 5.5f, 7.0f, 9.0f, 11.0f, 13.0f, 15.0f
     )
 
     private val eccentricity = floatArrayOf(
@@ -52,21 +45,12 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
     )
 
     private val rotationSpeedMultipliers = floatArrayOf(
-        9.0f,  // Меркурий
-        8.0f,  // Венера
-        7.0f,  // Земля
-        5.0f,  // Марс
-        14.0f, // Юпитер
-        8.0f,  // Сатурн
-        6.0f,  // Уран
-        6.0f   // Нептун
+        9.0f, 8.0f, 7.0f, 5.0f, 14.0f, 8.0f, 6.0f, 6.0f
     )
 
     private var lastTime = 0L
     private var baseAngle = 0f
-
     private var selectedPlanetIndex = 0
-
     private var isInitialized = false
     private var pendingSelectedPlanetIndex = 0
 
@@ -126,17 +110,17 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
         }
 
         moon = TexturedPlanet(context, moonSize, R.drawable.moon)
-
         selectorCube = SelectorCube()
 
         sun.loadTexture(gl)
+
         for (planet in planets) {
             planet.loadTexture(gl)
         }
+
         moon.loadTexture(gl)
 
         lastTime = System.currentTimeMillis()
-
         selectedPlanetIndex = pendingSelectedPlanetIndex
         isInitialized = true
 
@@ -177,7 +161,8 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
         gl.glMatrixMode(GL10.GL_MODELVIEW)
         gl.glLoadIdentity()
 
-        android.opengl.GLU.gluLookAt(gl,
+        android.opengl.GLU.gluLookAt(
+            gl,
             8.0f, 10.0f, 8.0f,
             0.0f, 0.0f, 0.0f,
             0.0f, 1.0f, 0.0f
@@ -222,6 +207,7 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
             gl.glRotatef(rotationAngle, 0f, 1f, 0f)
 
             planets[i].draw(gl)
+
             gl.glPopMatrix()
         }
 
@@ -274,10 +260,8 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
 
         if (selectedPlanetIndex == 8) {
             gl.glPushMatrix()
-
             gl.glTranslatef(moonX, moonY, moonZ)
             selectorCube.draw(gl)
-
             gl.glPopMatrix()
         }
     }
