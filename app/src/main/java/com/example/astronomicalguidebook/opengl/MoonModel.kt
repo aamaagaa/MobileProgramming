@@ -119,16 +119,6 @@ class MoonModel(private val context: Context) {
         gl.glEnable(GL10.GL_TEXTURE_2D)
         gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId)
 
-        val ambient = floatArrayOf(0.3f, 0.3f, 0.3f, 1.0f)
-        val diffuse = floatArrayOf(1.0f, 1.0f, 1.0f, 1.0f)
-        val specular = floatArrayOf(1.0f, 1.0f, 1.0f, 1.0f)
-        val shininess = 96.0f
-
-        gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT, ambient, 0)
-        gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_DIFFUSE, diffuse, 0)
-        gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_SPECULAR, specular, 0)
-        gl.glMaterialf(GL10.GL_FRONT_AND_BACK, GL10.GL_SHININESS, shininess)
-
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY)
         gl.glEnableClientState(GL10.GL_NORMAL_ARRAY)
         gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY)

@@ -25,12 +25,18 @@ class MoonActivity : AppCompatActivity() {
         glSurfaceView = findViewById(R.id.moon_gl_surface_view)
         glSurfaceView.setEGLContextClientVersion(1)
         glSurfaceView.setRenderer(object : GLSurfaceView.Renderer {
+
+            private var lightPositionX = 2.0f
+            private var lightPositionY = 2.0f
+            private var lightPositionZ = 2.0f
+            private var lightAngle = 0f
+
             override fun onSurfaceCreated(gl: GL10, config: EGLConfig) {
                 gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
                 gl.glEnable(GL10.GL_DEPTH_TEST)
-
                 gl.glEnable(GL10.GL_LIGHTING)
                 gl.glEnable(GL10.GL_LIGHT0)
+                gl.glEnable(GL10.GL_NORMALIZE)
 
                 moonModel.loadTexture(gl)
                 lastTime = System.currentTimeMillis()
@@ -54,14 +60,18 @@ class MoonActivity : AppCompatActivity() {
                 lastTime = currentTime
 
                 rotationAngle += deltaTime * 40f
+                lightAngle += deltaTime * 20f
+
+                lightPositionX = 3.0f * Math.cos(lightAngle.toDouble()).toFloat()
+                lightPositionZ = 3.0f * Math.sin(lightAngle.toDouble()).toFloat()
 
                 gl.glClear(GL10.GL_COLOR_BUFFER_BIT or GL10.GL_DEPTH_BUFFER_BIT)
 
                 gl.glMatrixMode(GL10.GL_MODELVIEW)
                 gl.glLoadIdentity()
 
-                val lightPos = floatArrayOf(2.0f, 2.0f, 2.0f, 0.0f)
-                val lightAmbient = floatArrayOf(0.3f, 0.3f, 0.3f, 1.0f)
+                val lightPos = floatArrayOf(lightPositionX, lightPositionY, lightPositionZ, 1.0f)
+                val lightAmbient = floatArrayOf(0.2f, 0.2f, 0.2f, 1.0f)
                 val lightDiffuse = floatArrayOf(1.0f, 1.0f, 1.0f, 1.0f)
                 val lightSpecular = floatArrayOf(1.0f, 1.0f, 1.0f, 1.0f)
 
@@ -69,6 +79,16 @@ class MoonActivity : AppCompatActivity() {
                 gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, lightAmbient, 0)
                 gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, lightDiffuse, 0)
                 gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_SPECULAR, lightSpecular, 0)
+
+                val matAmbient = floatArrayOf(0.3f, 0.3f, 0.3f, 1.0f)
+                val matDiffuse = floatArrayOf(0.9f, 0.9f, 0.9f, 1.0f)
+                val matSpecular = floatArrayOf(1.0f, 1.0f, 1.0f, 1.0f)
+                val shininess = 96.0f
+
+                gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT, matAmbient, 0)
+                gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_DIFFUSE, matDiffuse, 0)
+                gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_SPECULAR, matSpecular, 0)
+                gl.glMaterialf(GL10.GL_FRONT_AND_BACK, GL10.GL_SHININESS, shininess)
 
                 gl.glTranslatef(0f, 0f, -8f)
                 gl.glRotatef(rotationAngle * 10, 0f, 1f, 0f)
