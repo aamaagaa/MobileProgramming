@@ -13,6 +13,7 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
     private val planets = mutableListOf<TexturedPlanet>()
     private lateinit var moon: TexturedPlanet
     private lateinit var selectorCube: SelectorCube
+    private lateinit var blackHole: BlackHole
 
     private val orbitRadii = floatArrayOf(
         2.5f, 4.0f, 5.5f, 7.0f, 9.0f, 11.0f, 13.0f, 15.0f
@@ -111,6 +112,7 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
 
         moon = TexturedPlanet(context, moonSize, R.drawable.moon)
         selectorCube = SelectorCube()
+        blackHole = BlackHole(context, 2.5f, 2.5f)
 
         sun.loadTexture(gl)
 
@@ -119,6 +121,7 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
         }
 
         moon.loadTexture(gl)
+        blackHole.loadTexture(gl)
 
         lastTime = System.currentTimeMillis()
         selectedPlanetIndex = pendingSelectedPlanetIndex
@@ -183,6 +186,8 @@ class OpenGLRenderer(private val context: Context) : GLSurfaceView.Renderer {
         gl.glDepthMask(true)
 
         gl.glPopMatrix()
+
+        blackHole.draw(gl)
 
         gl.glPushMatrix()
         gl.glRotatef(baseAngle * 5 * rotationSpeedMultipliers[0], 0f, 1f, 0f)
